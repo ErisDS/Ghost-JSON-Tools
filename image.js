@@ -254,7 +254,7 @@ var fetchImage = {
                     {
                         'meta': {
                             'exported_on': 1408539273930,
-                            'version': '003'
+                            'version': '2.26.0'
                         },
                         'data': {
                             'posts': postsArray[i],
