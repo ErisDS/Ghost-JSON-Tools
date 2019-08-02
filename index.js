@@ -8,7 +8,9 @@ var _ = require('lodash'),
         tools   = {},
         debug   = require('debug')('Index.js'),
         image   = require('./image.js'),
-        analyse = require('./analyse.js');
+    analyse = require('./analyse.js');
+
+var DEFAULT_CHUNK_SIZE = 200;
 
 
 
@@ -22,13 +24,14 @@ var init = function init() {
             analyse: false
         },
         type,
+        chunkSize,
         help = '----------------------------------------------------------------------------------------' +
             '\n\nYou can add these flags:' +
             '\n\n-i                This will run the image scraper tool and create a folder of images' +
             '\n-m                This will convert html to markdown' +
             '\n-f=test.json      This tells us the file you want to convert' +
             '\n-t=markdown       This will convert different types of markdown to html' +
-            '\n-c                This will chunk your json import file into chunks of 200 posts' +
+            '\n-c=num            This will chunk your json import file into chunks of num posts (default 200)' +
             '\n\n---------------------------------------------------------------------------------------' +
             '\n-a                Analyses your file. Prepend cli command with DEBUG=analysis.' +
             '\n                  This overrides all other methods' +
@@ -54,6 +57,7 @@ var init = function init() {
                 break;
             case '-c':
                 flags.chunk = true;
+                chunkSize = arg.slice(3) || DEFAULT_CHUNK_SIZE;
                 break;
             case '-a':
                 flags.analyse = true;
@@ -70,7 +74,7 @@ var init = function init() {
     } else if (flags.analyse) {
         analyse.init(flags);
     } else {
-        image.init(flags, type);
+        image.init(flags, type, chunkSize);
     }
 };
 

@@ -1,5 +1,4 @@
-var  fs,
-    _ = require('lodash'),
+var  _ = require('lodash'),
     path = require('path'),
     Promise = require('bluebird'),
     request = Promise.promisify(require('request')),
@@ -13,13 +12,17 @@ var  fs,
     normalizeNewline = require('normalize-newline'),
     originalImages = [], newImages = [],
     debug = require('debug')('Image.js'),
-    fsExtra = require('fs-extra'), fetchImage;
+    fsExtra = require('fs-extra');
 
-fs = Promise.promisifyAll(require('fs'));
+var fs = Promise.promisifyAll(require('fs'));
+var chunkSize;
 
-fetchImage = {
-    init: function init(params, type) {
+var fetchImage = {
+    init: function init(params, type, size) {
         debug('initialising');
+        if (size) {
+            chunkSize = size;
+        }
         fs.exists(params.originalFile, function (exists) {
             if (exists) {
                 fetchImage.createWorkspace(params, type);
@@ -207,7 +210,7 @@ fetchImage = {
 
     writeFile: function writeFile(updatedPosts) {
         console.log('writeFile called');
-        var files = [], output, postsArray = _.chunk(updatedPosts, 200);
+        var files = [], output, postsArray = _.chunk(updatedPosts, chunkSize);
 
         for(var i = 0; i < postsArray.length; i++) {
             var postCol = postsArray[i];
